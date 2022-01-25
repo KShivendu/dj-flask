@@ -29,10 +29,12 @@ class CustomNext:
 class BaseMiddleWare:
     def __init__(self, *args, **kwargs):
         self.server_next_callback = args[0]
+        # Determine the server type (Django/Flask) based on the 'get_response' property
+        # It's present only in case of Django.
         self.type = (
-            ServerType.FLASK
-            if True  # TODO: Find the best way to determine the server type (Django/Flask)
-            else ServerType.DJANGO  # type(args[0]) == Flask.wsgi_app
+            ServerType.DJANGO
+            if hasattr(self.server_next_callback, "get_response")
+            else ServerType.FLASK
         )
 
     def _get_request(self):
