@@ -31,18 +31,18 @@ class BaseMiddleWare:
         self.server_next_callback = args[0]
         self.type = (
             ServerType.FLASK
-            if True # TODO: Find the best way to determine the server type (Django/Flask)
+            if True  # TODO: Find the best way to determine the server type (Django/Flask)
             else ServerType.DJANGO  # type(args[0]) == Flask.wsgi_app
         )
 
     def _get_request(self):
         if self.type == ServerType.FLASK:
-            environ, start_response = self.args
+            environ, _ = self.call_args
             server_req = FlaskRequest(environ)
             query = server_req.args
 
         elif self.type == ServerType.DJANGO:
-            server_req = self.args[0]
+            server_req = self.call_args[0]
             query = server_req.GET
 
         request = CustomRequest(
@@ -52,20 +52,19 @@ class BaseMiddleWare:
 
     def _handle_next(self):
         # TODO: Think What if the request was changed by the middleware?
-        return self.server_next_callback(*self.args)
+        return self.server_next_callback(*self.call_args)
 
     def _handle_response(self, req: CustomRequest):
         if self.type == ServerType.DJANGO:
-            response = DjangoResponse(
-                content=req.body, staus_code=req.status, content_type=req.mimetype
-            )
+            response = DjangoResponse(content=req.body, content_type=req.mimetype)
+            response.status_code = req.status
             return response
         elif self.type == ServerType.FLASK:
             response = FlaskResponse(req.body, mimetype=req.mimetype, status=req.status)
-            return response(*self.args)
+            return response(*self.call_args)
 
     def __call__(self, *args, **kwargs):
-        self.args = args
+        self.call_args = args
         request = self._get_request()
         next = CustomNext()
 

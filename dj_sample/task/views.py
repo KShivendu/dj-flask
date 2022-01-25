@@ -1,8 +1,8 @@
 from django.http import HttpResponse
 
 
-def handle_even_or_odd(request):
-    return HttpResponse("Hello world")
+def even_or_odd(request):
+    return HttpResponse("Middleware didn't work. This response was sent by the controller")
 
-def handle_api(request):
-    return HttpResponse("API response")
+def greet(request):
+    return HttpResponse("Hello world")

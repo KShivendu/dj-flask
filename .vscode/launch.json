@@ -23,7 +23,7 @@
             "name": "Python: Django",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/dj/manage.py",
+            "program": "${workspaceFolder}/dj_sample/manage.py",
             "args": [
                 "runserver"
             ],

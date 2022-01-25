@@ -6,12 +6,20 @@ from dj_flask.middleware import (
     CustomRequest,
     CustomNext,
     CustomResponse,
+    ServerType
 )
 
 
-class CommonMiddlware(BaseMiddleWare):
+class CommonMiddleware(BaseMiddleWare):
+    """
+    Middleware for Django written using the dj_flask library
+    """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.type = ServerType.DJANGO
+
     def intercept(self, request: CustomRequest, next: CustomNext) -> CustomResponse:
-        if not (request.path != "/even-or-odd" and request.method == "GET"):
+        if not (request.path == "/even-or-odd" and request.method == "GET"):
             return next
         try:
             num = int(request.query["num"])
@@ -25,19 +33,19 @@ class CommonMiddlware(BaseMiddleWare):
                 status=200,
             )
 
-class SimpleMiddleware:
+class DjangoMiddleware:
+    """
+    Middleware for Django written using the conventional approach 
+    """
     def __init__(self, get_response):
         self.get_response = get_response
-        # One-time configuration and initialization.
 
     def __call__(self, request):
-        # Code to be executed for each request before
-        # the view (and later middleware) are called.
         if not (request.path == "/even-or-odd" and request.method == "GET"):
             return self.get_response(request)
         try:
             num = int(request.GET.get("num"))
         except:
-            return HttpResponseBadRequest()
+            return HttpResponseBadRequest('Bad request')
 
         return JsonResponse({"isEven": True if num % 2 == 0 else False})

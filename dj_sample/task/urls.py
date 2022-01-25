@@ -15,10 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from task.views import handle_even_or_odd, handle_api
+from task.views import even_or_odd, greet
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('even-or-odd/', handle_even_or_odd),
-    path('api/', handle_api),
+    path('even-or-odd', even_or_odd),
+    path('hello', greet),
 ]
