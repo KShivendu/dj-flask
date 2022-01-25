@@ -15,6 +15,8 @@ A simple library that allows you to write middlewares that run in Django and wel
     - The middleware returns `{"isEven": true}` because num is even
 2. http://localhost:8000/even-or-odd?num=23
     - The middleware returns `{"isEven": true}` because num is odd
+2. http://localhost:8000/even-or-odd?num=foo
+    - The middleware returns Bad request (400) because num is not an integer.
 3. http://localhost:8000/even-or-odd
     - The middleware returns Bad request (400) because num is missing.
 4. http://localhost:8000/hello (Middleware passes it to the controller.)
