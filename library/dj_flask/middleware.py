@@ -1,7 +1,6 @@
-from typing import Union
-from django.http import HttpResponse
-from json import dumps
-from werkzeug.wrappers import Request, Response
+from django.http import HttpResponse as DjangoResponse
+from werkzeug.wrappers import Request as FlaskRequest, Response as FlaskResponse
+
 
 class ServerType:
     DJANGO = 0
@@ -32,14 +31,14 @@ class BaseMiddleWare:
         self.server_next_callback = args[0]
         self.type = (
             ServerType.FLASK
-            if True
+            if True # TODO: Find the best way to determine the server type (Django/Flask)
             else ServerType.DJANGO  # type(args[0]) == Flask.wsgi_app
         )
 
     def _get_request(self):
         if self.type == ServerType.FLASK:
             environ, start_response = self.args
-            server_req = Request(environ)
+            server_req = FlaskRequest(environ)
             query = server_req.args
 
         elif self.type == ServerType.DJANGO:
@@ -57,12 +56,12 @@ class BaseMiddleWare:
 
     def _handle_response(self, req: CustomRequest):
         if self.type == ServerType.DJANGO:
-            response = HttpResponse(
+            response = DjangoResponse(
                 content=req.body, staus_code=req.status, content_type=req.mimetype
             )
             return response
         elif self.type == ServerType.FLASK:
-            response = Response(req.body, mimetype=req.mimetype, status=req.status)
+            response = FlaskResponse(req.body, mimetype=req.mimetype, status=req.status)
             return response(*self.args)
 
     def __call__(self, *args, **kwargs):
@@ -79,19 +78,3 @@ class BaseMiddleWare:
 
     def intercept(self, request: CustomRequest, next: CustomNext) -> CustomResponse:
         raise NotImplementedError()
-
-
-class CommonMiddleWare(BaseMiddleWare):
-    def intercept(
-        self, request: CustomRequest, next: CustomNext
-    ) -> Union[CustomResponse, CustomNext]:
-        if not (request.path == "/even-or-odd" and request.method == "GET"):
-            return next
-        try:
-            num = int(request.query.get("num"))
-        except:
-            return CustomResponse(body="Bad request", status=400)
-
-        return CustomResponse(
-            dumps({"isEven": True if num % 2 == 0 else False}), "application/json", 200
-        )

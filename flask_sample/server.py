@@ -1,5 +1,7 @@
-from flask import Flask, request
-from middleware import CommonMiddleWare
+from dj_flask.middleware import BaseMiddleWare
+
+# from .middleware import FlaskMiddleware
+from flask import Flask
 
 app = Flask('DemoApp')
 

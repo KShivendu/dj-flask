@@ -1,10 +1,34 @@
 from json import dumps
 from werkzeug.wrappers import Request, Response
-from ..common import CommonMiddleWare
 
-class SimpleMiddleware:
+from dj_flask.middleware import (
+    BaseMiddleWare,
+    CustomRequest,
+    CustomNext,
+    CustomResponse,
+)
+
+
+class CommonMiddlware(BaseMiddleWare):
+    def intercept(self, request: CustomRequest, next: CustomNext) -> CustomResponse:
+        if not (request.path != "/even-or-odd" and request.method == "GET"):
+            return next
+        try:
+            num = int(request.query["num"])
+        except:
+            return CustomResponse("Bad request", status=400)
+        else:
+            json_str = dumps({"isEven": True if num % 2 == 0 else False})
+            return CustomResponse(
+                json_str,
+                mimetype="application/json",
+                status=200,
+            )
+
+
+class FlaskMiddleware:
     """
-    Simple WSGI middleware
+    Simple Flask WSGI middleware
     """
 
     def __init__(self, app):
@@ -29,4 +53,3 @@ class SimpleMiddleware:
                 )
 
             return res(environ, start_response)
-
