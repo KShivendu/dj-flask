@@ -3,7 +3,7 @@
 A simple library that allows you to write middlewares that run in Django and well as Flask.
 
 ## Setup
-- Run `cd library && python setup.py bdist_wheel` to generate 
+- Run `cd library && python setup.py bdist_wheel` to generate files required for installation
 - Run `pip install -r requirements.txt` to install the library
 
 ## Running the examples
