@@ -11,7 +11,7 @@ from dj_flask.middleware import (
 
 class CommonMiddlware(BaseMiddleWare):
     def intercept(self, request: CustomRequest, next: CustomNext) -> CustomResponse:
-        if not (request.path != "/even-or-odd" and request.method == "GET"):
+        if not (request.path == "/even-or-odd" and request.method == "GET"):
             return next
         try:
             num = int(request.query["num"])

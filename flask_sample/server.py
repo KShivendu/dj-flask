@@ -1,12 +1,10 @@
-from dj_flask.middleware import BaseMiddleWare
-
-# from .middleware import FlaskMiddleware
+from middleware import FlaskMiddleware, CommonMiddlware
 from flask import Flask
 
 app = Flask('DemoApp')
 
 # calling our middleware
-app.wsgi_app = CommonMiddleWare(app.wsgi_app)
+app.wsgi_app = CommonMiddlware(app.wsgi_app)
 
 @app.route('/even-or-odd', methods=['GET', 'POST'])
 def even_or_odd():
