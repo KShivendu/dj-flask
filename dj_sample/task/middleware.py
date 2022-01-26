@@ -14,10 +14,6 @@ class CommonMiddleware(BaseMiddleWare):
     """
     Middleware for Django written using the dj_flask library
     """
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.type = ServerType.DJANGO
-
     def intercept(self, request: CustomRequest, next: CustomNext) -> CustomResponse:
         if not (request.path == "/even-or-odd" and request.method == "GET"):
             return next
