@@ -13,6 +13,8 @@ A simple library that allows you to write middlewares that run in Django and wel
 ## Example
 
 ```python
+# middleware.py
+
 from dj_flask.middleware import (
     BaseMiddleWare,
     CustomRequest,
@@ -37,8 +39,30 @@ class CommonMiddlware(BaseMiddleWare):
             )
 ```
 
+### For Django:
+```python
+# examples/django/app/settings.py
 
-## Example endpoints
+MIDDLEWARE = [
+    'task.middleware.CommonMiddleware',
+    '...'
+]
+```
+
+### For Flask:
+```python
+# examples/flask/server.py
+
+from middleware import CommonMiddlware
+from flask import Flask
+
+app = Flask('DemoApp')
+
+app.wsgi_app = CommonMiddlware(app.wsgi_app)
+```
+
+### Endpoints
+
 1. http://localhost:8000/even-or-odd?num=22
     - The middleware returns `{"isEven": true}` because num is even
 2. http://localhost:8000/even-or-odd?num=23
