@@ -10,6 +10,34 @@ A simple library that allows you to write middlewares that run in Django and wel
 - For Django: `cd dj_sample && python manage.py runserver`
 - For Flask: `cd flask_sample && python server.py`
 
+## Example
+
+```python
+from dj_flask.middleware import (
+    BaseMiddleWare,
+    CustomRequest,
+    CustomNext,
+    CustomResponse,
+)
+
+class CommonMiddlware(BaseMiddleWare):
+    def intercept(self, request: CustomRequest, next: CustomNext) -> CustomResponse:
+        if not (request.path == "/even-or-odd" and request.method == "GET"):
+            return next
+        try:
+            num = int(request.query["num"])
+        except:
+            return CustomResponse("Bad request", status=400)
+        else:
+            json_str = dumps({"isEven": True if num % 2 == 0 else False})
+            return CustomResponse(
+                json_str,
+                mimetype="application/json",
+                status=200,
+            )
+```
+
+
 ## Example endpoints
 1. http://localhost:8000/even-or-odd?num=22
     - The middleware returns `{"isEven": true}` because num is even
